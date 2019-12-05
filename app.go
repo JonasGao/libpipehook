@@ -89,8 +89,8 @@ func (h *libHookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func getMsg(hook shook) string {
-	content := fmt.Sprintf(`%s(%s) Pushed \"%s\" commit, Build [%s]!`, hook.Commit.Author.Name, hook.Commit.Author.Email,
-		hook.Commit.Message, hook.ObjectAttributes.Status)
+	content := fmt.Sprintf(`In project [%s], %s(%s) Pushed \"%s\" commit, Build [%s]!`, hook.Project.Name,
+		hook.Commit.Author.Name, hook.Commit.Author.Email, hook.Commit.Message, hook.ObjectAttributes.Status)
 	return fmt.Sprintf(`{"msgtype":"text","text":{"content":"%s"}}`, content)
 }
 
