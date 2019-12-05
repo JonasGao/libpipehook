@@ -89,7 +89,7 @@ func (h *libHookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func getMsg(hook shook) string {
-	content := fmt.Sprintf(`%s(%s) Pushed "%s" commit, Build [%s]!`, hook.Commit.Author.Name, hook.Commit.Author.Email,
+	content := fmt.Sprintf(`%s(%s) Pushed \"%s\" commit, Build [%s]!`, hook.Commit.Author.Name, hook.Commit.Author.Email,
 		hook.Commit.Message, hook.ObjectAttributes.Status)
 	return fmt.Sprintf(`{"msgtype":"text","text":{"content":"%s"}}`, content)
 }
@@ -119,6 +119,7 @@ func (h *libHookHandler) getSign() (int64, string) {
 func (h *libHookHandler) sendMsg(msg string) {
 	stamp, sign := h.getSign()
 	u := fmt.Sprintf("%s&timestamp=%d&sign=%s", h.roboUrl, stamp, sign)
+	fmt.Println("will send", msg)
 	resp, err := http.Post(u, "application/json", strings.NewReader(msg))
 	if err != nil {
 		panic(err)
