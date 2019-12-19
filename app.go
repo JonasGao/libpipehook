@@ -51,7 +51,7 @@ type buildsModel struct {
 	Status string
 }
 
-type shook struct {
+type hookModel struct {
 	ObjectKind       string          `json:"object_kind"`
 	ObjectAttributes attributesModel `json:"object_attributes"`
 	User             userModel       `json:"user"`
@@ -79,18 +79,18 @@ func (h *libHookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	fmt.Printf("%s\n", bytes)
-	var hook shook
+	var hook hookModel
 	err = json.Unmarshal(bytes, &hook)
 	if err != nil {
 		panic(err)
 	}
-	h.sendMsg(getMsg(hook))
+	h.convertAndSend(hook)
 	w.WriteHeader(200)
 }
 
-func getMsg(hook shook) string {
-	content := fmt.Sprintf(`In project [%s], %s(%s) Pushed \"%s\" commit, Build [%s]!`, hook.Project.Name,
-		hook.Commit.Author.Name, hook.Commit.Author.Email, hook.Commit.Message, hook.ObjectAttributes.Status)
+func getMsg(hook hookModel) string {
+	content := fmt.Sprintf(`In project [%s], push commit \"%s\" by %s(%s), build [%s]!`, hook.Project.Name,
+		hook.Commit.Message, hook.Commit.Author.Name, hook.Commit.Author.Email, hook.ObjectAttributes.Status)
 	return fmt.Sprintf(`{"msgtype":"text","text":{"content":"%s"}}`, content)
 }
 
@@ -129,6 +129,10 @@ func (h *libHookHandler) sendMsg(msg string) {
 		panic(err)
 	}
 	fmt.Printf("send response [%s]%s\n", resp.Status, body)
+}
+
+func (h *libHookHandler) convertAndSend(hook hookModel) {
+	h.sendMsg(getMsg(hook))
 }
 
 func main() {
