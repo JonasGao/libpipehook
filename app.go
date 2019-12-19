@@ -25,6 +25,7 @@ type userModel struct {
 }
 
 type attributesModel struct {
+	Id             int    `json:"id"`
 	Status         string `json:"status"`
 	DetailedStatus string `json:"detailed_status"`
 	CreatedAt      string `json:"created_at"`
@@ -33,7 +34,8 @@ type attributesModel struct {
 }
 
 type projectModel struct {
-	Name string
+	Name   string `json:"name"`
+	WebUrl string `json:"web_url"`
 }
 
 type authorModel struct {
@@ -86,12 +88,6 @@ func (h *libHookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	h.convertAndSend(hook)
 	w.WriteHeader(200)
-}
-
-func getMsg(hook hookModel) string {
-	content := fmt.Sprintf(`In project [%s], push commit \"%s\" by %s(%s), build [%s]!`, hook.Project.Name,
-		hook.Commit.Message, hook.Commit.Author.Name, hook.Commit.Author.Email, hook.ObjectAttributes.Status)
-	return fmt.Sprintf(`{"msgtype":"text","text":{"content":"%s"}}`, content)
 }
 
 func makeTimestamp() int64 {
