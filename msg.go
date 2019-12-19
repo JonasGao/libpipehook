@@ -32,18 +32,16 @@ func getTitle(model hookModel) string {
 }
 
 func getText(model hookModel) string {
-	content := fmt.Sprintf(`The pipeline is triggered by the commit **\"%s\"** pushed by %s(%s)`,
-		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email)
+	content := fmt.Sprintf(`###%s
+The pipeline is triggered by the commit **\"%s\"** pushed by **%s(%s)**。[查看详情](%s)`,
+		getTitle(model),
+		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email,
+		getPipelineLink(model))
 	return content
 }
 
 func getMsg(model hookModel) string {
-	btns := []ActionCardBtn{
-		{
-			Title:     "查看详情",
-			ActionURL: getPipelineLink(model),
-		},
-	}
+	var btns []ActionCardBtn
 	actionCard := ActionCardMsg{
 		Title:          getTitle(model),
 		Text:           getText(model),
