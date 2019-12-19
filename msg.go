@@ -32,7 +32,8 @@ func getTitle(model hookModel) string {
 }
 
 func getText(model hookModel) string {
-	content := fmt.Sprintf(`###%s
+	content := fmt.Sprintf(`### %s
+
 The pipeline is triggered by the commit **\"%s\"** pushed by **%s(%s)**。[查看详情](%s)`,
 		getTitle(model),
 		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email,
