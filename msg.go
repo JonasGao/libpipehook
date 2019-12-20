@@ -5,6 +5,30 @@ import (
 	"fmt"
 )
 
+const (
+	statusTitleTemplate = "%s <span style='color: %s'>%s</span>"
+
+	statusSuccess = "success"
+	statusPending = "pending"
+	statusRunning = "running"
+	statusFailed  = "failed"
+
+	iconSuccess = "💯"
+	iconPending = "🕑"
+	iconRunning = "🕘"
+	iconFailed  = "💥"
+
+	titleSuccess = "Success"
+	titlePending = "Pending"
+	titleRunning = "Running"
+	titleFailed  = "Failed"
+
+	colorSuccess = "Green"
+	colorPending = "Blue"
+	colorRunning = "Orange"
+	colorFailed  = "Red"
+)
+
 type ActionCardBtn struct {
 	Title     string `json:"title"`
 	ActionURL string `json:"actionURL"`
@@ -31,11 +55,33 @@ func getTitle(model hookModel) string {
 	return fmt.Sprintf("Run [%s] pipeline: %s", model.Project.Name, model.ObjectAttributes.Status)
 }
 
-func getText(model hookModel) string {
-	content := fmt.Sprintf(`### %s
+func getStatusTitle(model hookModel) string {
+	switch model.ObjectAttributes.Status {
+	case statusSuccess:
+		return fmt.Sprintf(statusTitleTemplate, iconSuccess, colorSuccess, titleSuccess)
+	case statusPending:
+		return fmt.Sprintf(statusTitleTemplate, iconPending, colorPending, titlePending)
+	case statusRunning:
+		return fmt.Sprintf(statusTitleTemplate, iconRunning, colorRunning, titleRunning)
+	case statusFailed:
+		return fmt.Sprintf(statusTitleTemplate, iconFailed, colorFailed, titleFailed)
+	}
+	return "???"
+}
 
-The pipeline is triggered by the commit **\"%s\"** pushed by **%s(%s)**。[查看详情](%s)`,
-		getTitle(model),
+func getText(model hookModel) string {
+	content := fmt.Sprintf(`### Run pipeline:
+
+Project: **%s**
+
+Status: %s
+
+Commit: %s
+
+Author: %s(%s)
+
+[查看详情](%s)`,
+		model.Project.Name, getStatusTitle(model),
 		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email,
 		getPipelineLink(model))
 	return content
