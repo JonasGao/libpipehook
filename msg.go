@@ -13,8 +13,8 @@ const (
 	statusRunning = "running"
 	statusFailed  = "failed"
 
-	iconSuccess = "💯"
-	iconPending = "🕑"
+	iconSuccess = "👍"
+	iconPending = "⌛️"
 	iconRunning = "🕘"
 	iconFailed  = "💥"
 
