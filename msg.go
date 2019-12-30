@@ -74,15 +74,17 @@ func getText(model hookModel) string {
 
 Project: **%s**
 
+Ref: %s
+
 Status: %s
 
 Commit: %s
 
-Author: %s(%s)
+Author: %s
 
 [查看详情](%s)`,
-		model.Project.Name, getStatusTitle(model),
-		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email,
+		model.Project.Name, model.ObjectAttributes.Ref, getStatusTitle(model),
+		model.Commit.Message, model.Commit.Author.Name,
 		getPipelineLink(model))
 	return content
 }

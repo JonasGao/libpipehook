@@ -26,6 +26,7 @@ type userModel struct {
 
 type attributesModel struct {
 	Id             int    `json:"id"`
+	Ref            string `json:"ref"`
 	Status         string `json:"status"`
 	DetailedStatus string `json:"detailed_status"`
 	CreatedAt      string `json:"created_at"`
