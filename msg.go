@@ -6,27 +6,20 @@ import (
 )
 
 const (
-	statusTitleTemplate = "%s <span style='color: %s'>%s</span>"
-
 	statusSuccess = "success"
 	statusPending = "pending"
 	statusRunning = "running"
 	statusFailed  = "failed"
 
 	iconSuccess = "👍"
-	iconPending = "⌛️"
+	iconPending = "⌛"
 	iconRunning = "🕘"
-	iconFailed  = "💥"
+	iconFailed  = "❌"
 
 	titleSuccess = "Success"
 	titlePending = "Pending"
 	titleRunning = "Running"
 	titleFailed  = "Failed"
-
-	colorSuccess = "Green"
-	colorPending = "Blue"
-	colorRunning = "Orange"
-	colorFailed  = "Red"
 )
 
 type ActionCardBtn struct {
@@ -55,33 +48,45 @@ func getTitle(model hookModel) string {
 	return fmt.Sprintf("Run [%s] pipeline: %s", model.Project.Name, model.ObjectAttributes.Status)
 }
 
+func getStatusIcon(model hookModel) string {
+	switch model.ObjectAttributes.Status {
+	case statusSuccess:
+		return iconSuccess
+	case statusPending:
+		return iconPending
+	case statusRunning:
+		return iconRunning
+	case statusFailed:
+		return iconFailed
+	}
+	return "???"
+}
+
 func getStatusTitle(model hookModel) string {
 	switch model.ObjectAttributes.Status {
 	case statusSuccess:
-		return fmt.Sprintf(statusTitleTemplate, iconSuccess, colorSuccess, titleSuccess)
+		return titleSuccess
 	case statusPending:
-		return fmt.Sprintf(statusTitleTemplate, iconPending, colorPending, titlePending)
+		return titlePending
 	case statusRunning:
-		return fmt.Sprintf(statusTitleTemplate, iconRunning, colorRunning, titleRunning)
+		return titleRunning
 	case statusFailed:
-		return fmt.Sprintf(statusTitleTemplate, iconFailed, colorFailed, titleFailed)
+		return titleFailed
 	}
 	return "???"
 }
 
 func getText(model hookModel) string {
-	content := fmt.Sprintf(`### Run pipeline:
+	content := fmt.Sprintf(`## Pipeline: %s %s
 
 Project: **%s**
-
-Status: %s
 
 Commit: %s
 
 Author: %s(%s)
 
 [查看详情](%s)`,
-		model.Project.Name, getStatusTitle(model),
+		getStatusIcon(model), getStatusTitle(model), model.Project.Name,
 		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email,
 		getPipelineLink(model))
 	return content
