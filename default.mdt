@@ -1,6 +1,8 @@
 {{$s:=.ObjectAttributes.Status}}## Pipeline: {{if eq $s "success"}}👍{{else if eq $s "pending"}}⌛{{else if eq $s "running"}}🕘{{else}}❌{{end}} {{.ObjectAttributes.Status}}
 
-Project: **{{.Project.Name}}**
+### Project: {{.Project.Name}}
+
+#### Ref: {{.ObjectAttributes.Ref}}
 
 Commit: {{.Commit.Message}}
 

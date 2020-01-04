@@ -11,6 +11,7 @@ func TestGetText(t *testing.T) {
 		ObjectAttributes: attributesModel{
 			Id:     123,
 			Status: "success",
+			Ref:    "dev",
 		},
 		User: userModel{},
 		Project: projectModel{
