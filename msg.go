@@ -47,7 +47,7 @@ func getText(model hookModel) string {
 }
 
 func getDefaultTemplate() *template.Template {
-	return getTemplate("default.md")
+	return getTemplate("default.mdt")
 }
 
 var templates = make(map[string]*template.Template)
@@ -73,7 +73,7 @@ func getTemplate(templateName string) *template.Template {
 }
 
 func getTemplateName(model hookModel) string {
-	return model.ObjectAttributes.Status + ".md"
+	return model.ObjectAttributes.Status + ".mdt"
 }
 
 func getMsgBody(model hookModel) string {
