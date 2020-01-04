@@ -1,0 +1,10 @@
+{{$s:=.ObjectAttributes.Status}}
+## Pipeline: {{if eq $s "success"}}👍{{else if eq $s "pending"}}⌛{{else if eq $s "running"}}🕘{{else}}❌{{end}} {{.ObjectAttributes.Status}}
+
+Project: **{{.Project.Name}}**
+
+Commit: {{.Commit.Message}}
+
+Author: {{.Commit.Author.Name}}({{.Commit.Author.Email}})
+
+[查看详情]({{.Project.WebUrl}}/pipelines/{{.ObjectAttributes.Id}})

@@ -1,25 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-)
-
-const (
-	statusSuccess = "success"
-	statusPending = "pending"
-	statusRunning = "running"
-	statusFailed  = "failed"
-
-	iconSuccess = "👍"
-	iconPending = "⌛"
-	iconRunning = "🕘"
-	iconFailed  = "❌"
-
-	titleSuccess = "Success"
-	titlePending = "Pending"
-	titleRunning = "Running"
-	titleFailed  = "Failed"
+	"html/template"
+	"os"
 )
 
 type ActionCardBtn struct {
@@ -40,59 +26,57 @@ type Msg struct {
 	ActionCard interface{} `json:"actionCard"`
 }
 
-func getPipelineLink(model hookModel) string {
-	return fmt.Sprintf("%s/pipelines/%d", model.Project.WebUrl, model.ObjectAttributes.Id)
-}
-
 func getTitle(model hookModel) string {
-	return fmt.Sprintf("Run [%s] pipeline: %s", model.Project.Name, model.ObjectAttributes.Status)
-}
-
-func getStatusIcon(model hookModel) string {
-	switch model.ObjectAttributes.Status {
-	case statusSuccess:
-		return iconSuccess
-	case statusPending:
-		return iconPending
-	case statusRunning:
-		return iconRunning
-	case statusFailed:
-		return iconFailed
-	}
-	return "???"
-}
-
-func getStatusTitle(model hookModel) string {
-	switch model.ObjectAttributes.Status {
-	case statusSuccess:
-		return titleSuccess
-	case statusPending:
-		return titlePending
-	case statusRunning:
-		return titleRunning
-	case statusFailed:
-		return titleFailed
-	}
-	return "???"
+	return fmt.Sprintf("Pipeline: [%s] %s", model.Project.Name, model.ObjectAttributes.Status)
 }
 
 func getText(model hookModel) string {
-	content := fmt.Sprintf(`## Pipeline: %s %s
-
-Project: **%s**
-
-Commit: %s
-
-Author: %s(%s)
-
-[查看详情](%s)`,
-		getStatusIcon(model), getStatusTitle(model), model.Project.Name,
-		model.Commit.Message, model.Commit.Author.Name, model.Commit.Author.Email,
-		getPipelineLink(model))
-	return content
+	t := getHookTemplate(model)
+	if t == nil {
+		t = getDefaultTemplate()
+		if t == nil {
+			return "Notfound template: " + model.ObjectAttributes.Status
+		}
+	}
+	var tpl bytes.Buffer
+	err := t.Execute(&tpl, model)
+	if err != nil {
+		panic(err)
+	}
+	return tpl.String()
 }
 
-func getMsg(model hookModel) string {
+func getDefaultTemplate() *template.Template {
+	return getTemplate("default.md")
+}
+
+var templates = make(map[string]*template.Template)
+
+func getHookTemplate(model hookModel) *template.Template {
+	return getTemplate(getTemplateName(model))
+}
+
+func getTemplate(templateName string) *template.Template {
+	if t, ok := templates[templateName]; ok {
+		return t
+	}
+	info, err := os.Stat(templateName)
+	if os.IsNotExist(err) || info.IsDir() {
+		return nil
+	}
+	t, err := template.New(templateName).ParseFiles("./" + templateName)
+	if err != nil {
+		panic(err)
+	}
+	templates[templateName] = t
+	return t
+}
+
+func getTemplateName(model hookModel) string {
+	return model.ObjectAttributes.Status + ".md"
+}
+
+func getMsgBody(model hookModel) string {
 	var btns []ActionCardBtn
 	actionCard := ActionCardMsg{
 		Title:          getTitle(model),
@@ -105,9 +89,9 @@ func getMsg(model hookModel) string {
 		MsgType:    "actionCard",
 		ActionCard: &actionCard,
 	}
-	bytes, err := json.Marshal(msg)
+	b, err := json.Marshal(msg)
 	if err != nil {
 		panic(err)
 	}
-	return string(bytes)
+	return string(b)
 }

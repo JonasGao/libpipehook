@@ -128,7 +128,7 @@ func (h *libHookHandler) sendMsg(msg string) {
 }
 
 func (h *libHookHandler) convertAndSend(hook hookModel) {
-	h.sendMsg(getMsg(hook))
+	h.sendMsg(getMsgBody(hook))
 }
 
 func main() {
