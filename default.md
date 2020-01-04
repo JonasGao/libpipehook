@@ -1,5 +1,4 @@
-{{$s:=.ObjectAttributes.Status}}
-## Pipeline: {{if eq $s "success"}}👍{{else if eq $s "pending"}}⌛{{else if eq $s "running"}}🕘{{else}}❌{{end}} {{.ObjectAttributes.Status}}
+{{$s:=.ObjectAttributes.Status}}## Pipeline: {{if eq $s "success"}}👍{{else if eq $s "pending"}}⌛{{else if eq $s "running"}}🕘{{else}}❌{{end}} {{.ObjectAttributes.Status}}
 
 Project: **{{.Project.Name}}**
 
