@@ -40,7 +40,7 @@ func getTitle(model hookModel) string {
 func getText(model hookModel) string {
 	t := getHookTemplate(model)
 	if t == nil {
-		t = getDefaultTemplate()
+		t = getDefaultTemplate(model)
 		if t == nil {
 			return "Notfound template: " + model.ObjectAttributes.Status
 		}
@@ -53,8 +53,8 @@ func getText(model hookModel) string {
 	return tpl.String()
 }
 
-func getDefaultTemplate() *template.Template {
-	return getTemplate("default.mdt")
+func getDefaultTemplate(m hookModel) *template.Template {
+	return getTemplate(m.ObjectKind + ".default.mdt")
 }
 
 var templates = make(map[string]*template.Template)
