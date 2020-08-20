@@ -27,7 +27,14 @@ type Msg struct {
 }
 
 func getTitle(model hookModel) string {
-	return fmt.Sprintf("Pipeline: [%s] %s", model.Project.Name, model.ObjectAttributes.Status)
+	switch model.ObjectKind {
+	case "build":
+		return fmt.Sprintf("Pipeline: [%s] %s", model.Project.Name, model.ObjectAttributes.Status)
+	case "pipeline":
+		return fmt.Sprintf("Job: [%s] %s @ %s ( %s )", model.ProjectName, model.BuildName, model.BuildStage, model.BuildStatus)
+	default:
+		return "Unsupported message kind"
+	}
 }
 
 func getText(model hookModel) string {
@@ -73,7 +80,12 @@ func getTemplate(templateName string) *template.Template {
 }
 
 func getTemplateName(model hookModel) string {
-	return model.ObjectAttributes.Status + ".mdt"
+	switch model.ObjectKind {
+	case "build":
+		return model.BuildStage + "." + model.ObjectKind + ".mdt"
+	default:
+		return model.ObjectAttributes.Status + ".mdt"
+	}
 }
 
 func getMsgBody(model hookModel) string {

@@ -61,6 +61,10 @@ type hookModel struct {
 	Project          projectModel    `json:"project"`
 	Commit           commitModel     `json:"commit"`
 	Builds           []buildsModel   `json:"builds"`
+	ProjectName      string          `json:"build_name"`
+	BuildName        string          `json:"project_name"`
+	BuildStage       string          `json:"build_stage"`
+	BuildStatus      string          `json:"build_status"`
 }
 
 func (h *libHookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
