@@ -54,6 +54,10 @@ type buildsModel struct {
 	Status string
 }
 
+type repository struct {
+	Name string
+}
+
 type hookModel struct {
 	ObjectKind       string          `json:"object_kind"`
 	ObjectAttributes attributesModel `json:"object_attributes"`
@@ -65,6 +69,7 @@ type hookModel struct {
 	BuildName        string          `json:"build_name"`
 	BuildStage       string          `json:"build_stage"`
 	BuildStatus      string          `json:"build_status"`
+	Repository       repository      `json:"repository"`
 }
 
 func (h *libHookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
